@@ -1,14 +1,20 @@
 from random import randint
+from typing import List
+from .models import Game
 
 
-def set_field_with_mines(instance, row_, col_):
-    field = [["0" for i in range(int(instance.width))]
-             for j in range(int(instance.height))]
+def set_field_with_mines(instance: Game, row_: int, col_: int):
+    width = instance.width
+    height = instance.height
+    mines_count = instance.mines_count
+
+    field = [["0" for i in range(int(width))]
+             for j in range(int(height))]
     mines_positions = []
     count = 0
-    while count < instance.mines_count:
-        col = randint(0, instance.width - 1)
-        row = randint(0, instance.height - 1)
+    while count < mines_count:
+        col = randint(0, width - 1)
+        row = randint(0, height - 1)
         if (row, col) not in mines_positions and (row, col) != (row_, col_):
             field[row][col] = '-9'
             mines_positions.append((row, col))
@@ -35,7 +41,7 @@ def set_field_with_mines(instance, row_, col_):
     return field
 
 
-def game_is_won(field, field_with_mines):
+def game_is_won(field: List[List[str]], field_with_mines: List[List[str]]):
     flag = True
     for i in range(len(field)):
         for j in range(len(field[0])):
@@ -44,8 +50,60 @@ def game_is_won(field, field_with_mines):
     return flag
 
 
-def update_field(field):
-    for i in range(len(field)):
-        for j in range(len(field[0])):
+def zero_case(instance: Game, row: int, col: int):
+    field = instance.field
+    field_with_mines = instance.field_with_mines
+    width = instance.width
+    height = instance.height
+    stack = [(row, col)]
+
+    while stack:
+        row, col = stack.pop()
+        field[row][col] = field_with_mines[row][col]
+        if field_with_mines[row][col] == '0':
+            if 0 <= row - 1 < height:
+                if 0 <= col - 1 < width:
+                    if field[row - 1][col - 1] == ' ':
+                        stack.append((row - 1, col - 1))
+                if 0 <= col < width:
+                    if field[row - 1][col] == ' ':
+                        stack.append((row - 1, col))
+                if 0 <= col + 1 < width:
+                    if field[row - 1][col + 1] == ' ':
+                        stack.append((row - 1, col + 1))
+            if 0 <= row < height:
+                if 0 <= col - 1 < width:
+                    if field[row][col - 1] == ' ':
+                        stack.append((row, col - 1))
+                if 0 <= col < width:
+                    if field[row][col] == ' ':
+                        stack.append((row, col))
+                if 0 <= col + 1 < width:
+                    if field[row][col + 1] == ' ':
+                        stack.append((row, col + 1))
+            if 0 <= row + 1 < height:
+                if 0 <= col - 1 < width:
+                    if field[row + 1][col - 1] == ' ':
+                        stack.append((row + 1, col - 1))
+                if 0 <= col < width:
+                    if field[row + 1][col] == ' ':
+                        stack.append((row + 1, col))
+                if 0 <= col + 1 < width:
+                    if field[row + 1][col + 1] == ' ':
+                        stack.append((row + 1, col + 1))
+
+
+def update_field(instance, symbol):
+    height = instance.height
+    width = instance.width
+    field = instance.field
+    field_with_mines = instance.field_with_mines
+
+    for i in range(height):
+        for j in range(width):
             if field[i][j] == ' ':
-                field[i][j] = 'M'
+                if int(field_with_mines[i][j]) < 0:
+                    field[i][j] = symbol
+                else:
+                    field[i][j] = field_with_mines[i][j]
+
