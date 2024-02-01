@@ -41,10 +41,15 @@ def set_field_with_mines(instance: Game, row_: int, col_: int):
     return field
 
 
-def game_is_won(field: List[List[str]], field_with_mines: List[List[str]]):
+def game_is_won(instance: Game):
+    height = instance.height
+    width = instance.width
+    field = instance.field
+    field_with_mines = instance.field_with_mines
     flag = True
-    for i in range(len(field)):
-        for j in range(len(field[0])):
+
+    for i in range(height):
+        for j in range(width):
             if field[i][j] != field_with_mines[i][j] and int(field_with_mines[i][j]) >= 0:
                 flag = False
     return flag

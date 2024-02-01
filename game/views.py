@@ -51,7 +51,7 @@ class Turn(RetrieveAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
         if int(game.field_with_mines[row][col]) > 0:
             game.field[row][col] = game.field_with_mines[row][col]
-            if not game_is_won(game.field, game.field_with_mines):
+            if not game_is_won(game):
                 game.save()
                 serializer = GameSerializer(game)
                 data = serializer.data
@@ -74,7 +74,7 @@ class Turn(RetrieveAPIView):
                             status=status.HTTP_200_OK)
         if game.field_with_mines[row][col] == '0':
             zero_case(game, row=row, col=col)
-            if not game_is_won(game.field, game.field_with_mines):
+            if not game_is_won(game):
                 game.save()
                 serializer = GameSerializer(game)
                 data = serializer.data
