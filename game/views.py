@@ -18,7 +18,6 @@ class NewGame(CreateAPIView):
             if (data['mines_count'] >= data['width'] * data['height']) or (data['mines_count'] < 1):
                 return Response({"message": f"Количество ячеек должно быть не менее 1 и строго меньше "
                                             f"{data['width'] * data['height']}"}, status=status.HTTP_400_BAD_REQUEST)
-            del data['field_with_mines']
             return Response(data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -48,14 +47,12 @@ class Turn(RetrieveAPIView):
                 serializer = GameSerializer(game)
                 game.save()
                 data = serializer.data
-                del data['field_with_mines']
                 return Response(data, status=status.HTTP_200_OK)
             update_field(game.field)
             game.completed = True
             serializer = GameSerializer(game)
             game.save()
             data = serializer.data
-            del data['field_with_mines']
             return Response(data, status=status.HTTP_200_OK)
         if int(game.field_with_mines[row][col]) < 0:
             for i in range(game.height):
@@ -68,7 +65,6 @@ class Turn(RetrieveAPIView):
             serializer = GameSerializer(game)
             game.save()
             data = serializer.data
-            del data['field_with_mines']
             return Response(data, status=status.HTTP_200_OK)
         if game.field_with_mines[row][col] == '0':
             stack = [(row, col)]
@@ -110,12 +106,10 @@ class Turn(RetrieveAPIView):
                 serializer = GameSerializer(game)
                 game.save()
                 data = serializer.data
-                del data['field_with_mines']
                 return Response(serializer.data, status=status.HTTP_200_OK)
             update_field(game.field)
             game.completed = True
             serializer = GameSerializer(game)
             game.save()
             data = serializer.data
-            del data['field_with_mines']
             return Response(serializer.data, status=status.HTTP_200_OK)
