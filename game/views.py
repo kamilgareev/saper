@@ -78,12 +78,12 @@ class Turn(RetrieveAPIView):
                 game.save()
                 serializer = GameSerializer(game)
                 data = serializer.data
-                return Response(serializer.data,
+                return Response(data,
                                 status=status.HTTP_200_OK)
             update_field(game, symbol='M')
             game.completed = True
             game.save()
             serializer = GameSerializer(game)
             data = serializer.data
-            return Response(serializer.data,
+            return Response(data,
                             status=status.HTTP_200_OK)
