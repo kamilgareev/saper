@@ -98,7 +98,7 @@ def zero_case(instance: Game, row: int, col: int):
                         stack.append((row + 1, col + 1))
 
 
-def update_field(instance, symbol):
+def update_field(instance: Game, symbol: str):
     height = instance.height
     width = instance.width
     field = instance.field
